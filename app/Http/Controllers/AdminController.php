@@ -55,6 +55,7 @@ class AdminController extends Controller
         $filename = 'arirota-bolge-raporu-'.now()->format('Ymd').'.csv';
         return response()->streamDownload(function () {
             $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF");
             fputcsv($out, ['Bölge', 'İl', 'Kapasite', 'Dolu Kovan', 'Boş Kota']);
             Region::withSum(['hives as occupied' => fn ($query) => $query->where('status', 'active')], 'hive_count')->each(function (Region $region) use ($out) {
                 $occupied = (int) $region->occupied;
